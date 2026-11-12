@@ -1,0 +1,4 @@
+[Servidor]
+Puerto=443
+ModoSeguro=Activo
+MaxConexiones=100

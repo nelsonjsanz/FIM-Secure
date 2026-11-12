@@ -5,8 +5,8 @@
 
 ## 👥 Equipo de Trabajo (Metodología SCRUM)
 * **Nelson Sánchez (PO / Dev 2):** Product Owner & Especialista en Python / Integración.
-* **[Nombre Integrante 2] (Scrum Master):** Facilitador SCRUM & Gestión de Tablero.
-* **[Nombre Integrante 3] (Dev 1):** Especialista en Bajo Nivel (Lenguaje C - Win32 CryptoAPI).
+* **[Andrea Pernil] (Scrum Master):** Facilitador SCRUM & Gestión de Tablero.
+* **[Pedro Diaz] (Dev 1):** Especialista en Bajo Nivel (Lenguaje C - Win32 CryptoAPI).
 
 ---
 

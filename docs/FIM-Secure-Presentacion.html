@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FIM-Secure — Presentación Interactiva</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ─── Slide container ─── */
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      min-height: 100vh;
+      padding: 2.5rem;
+    }
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .slide.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Animated gradient backgrounds per slide ─── */
+    .bg-cyber-1 {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1040 40%, #0d1f3c 70%, #0a0e27 100%);
+    }
+    .bg-cyber-2 {
+      background: linear-gradient(135deg, #0d0d2b 0%, #1b0a30 50%, #0a1628 100%);
+    }
+    .bg-cyber-3 {
+      background: linear-gradient(135deg, #0b1120 0%, #0f1a3d 40%, #162040 100%);
+    }
+    .bg-cyber-4 {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+    .bg-cyber-5 {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a2040 50%, #0d1530 100%);
+    }
+    .bg-cyber-6 {
+      background: linear-gradient(135deg, #0d0820 0%, #1a0f35 40%, #0a1628 100%);
+    }
+
+    /* ─── Glow effects ─── */
+    .glow-cyan { text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.2); }
+    .glow-red { text-shadow: 0 0 20px rgba(255, 50, 80, 0.5), 0 0 40px rgba(255, 50, 80, 0.2); }
+    .glow-green { text-shadow: 0 0 20px rgba(0, 255, 150, 0.5), 0 0 40px rgba(0, 255, 150, 0.2); }
+    .glow-purple { text-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
+
+    .box-glow-cyan { box-shadow: 0 0 25px rgba(0, 255, 255, 0.15), inset 0 1px 0 rgba(0,255,255,0.1); }
+    .box-glow-red { box-shadow: 0 0 25px rgba(255, 50, 80, 0.15), inset 0 1px 0 rgba(255,50,80,0.1); }
+    .box-glow-green { box-shadow: 0 0 25px rgba(0, 255, 150, 0.15), inset 0 1px 0 rgba(0,255,150,0.1); }
+    .box-glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.15), inset 0 1px 0 rgba(168,85,247,0.1); }
+
+    /* ─── Animated background grid ─── */
+    .grid-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+      animation: gridMove 20s linear infinite;
+    }
+    @keyframes gridMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    /* ─── Scan line ─── */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.4), transparent);
+      z-index: 1;
+      animation: scanMove 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes scanMove {
+      0% { top: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* ─── Floating particles ─── */
+    .particle {
+      position: fixed;
+      width: 3px; height: 3px;
+      background: rgba(0, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      animation: particleFloat 8s ease-in-out infinite;
+    }
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      25% { opacity: 1; }
+      50% { transform: translateY(-200px) translateX(50px); opacity: 0.5; }
+      75% { opacity: 1; }
+    }
+
+    /* ─── Terminal typing ─── */
+    .terminal-line {
+      opacity: 0;
+      transform: translateX(-15px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .terminal-line.typed {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ─── Progress bar ─── */
+    .progress-track {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%; height: 4px;
+      background: rgba(255,255,255,0.05);
+      z-index: 100;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ffc8, #00d4ff, #a855f7);
+      transition: width 0.5s ease;
+    }
+
+    /* ─── Navigation ─── */
+    .nav-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 255, 255, 0.4);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-dot.active {
+      background: #00ffff;
+      border-color: #00ffff;
+      box-shadow: 0 0 12px rgba(0,255,255,0.6);
+    }
+    .nav-dot:hover {
+      border-color: #00ffff;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+    }
+
+    /* ─── Animate-in classes ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.in { opacity: 1; transform: translateY(0); }
+
+    .fade-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-left.in { opacity: 1; transform: translateX(0); }
+
+    .fade-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-right.in { opacity: 1; transform: translateX(0); }
+
+    .scale-in {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .scale-in.in { opacity: 1; transform: scale(1); }
+
+    /* ─── Architecture flow animation ─── */
+    .arch-arrow {
+      width: 0;
+      transition: width 0.8s ease;
+    }
+    .arch-arrow.expanded {
+      width: 60px;
+    }
+
+    /* Pulse ring */
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .pulse-ring {
+      animation: pulseRing 2s ease-out infinite;
+    }
+
+    /* Shield animation */
+    @keyframes shieldPulse {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(0,255,200,0.4)); }
+      50% { filter: drop-shadow(0 0 25px rgba(0,255,200,0.8)); }
+    }
+    .shield-pulse { animation: shieldPulse 2.5s ease-in-out infinite; }
+
+    /* Typewriter cursor */
+    .cursor-blink::after {
+      content: '▌';
+      animation: blink 1s step-end infinite;
+      color: #00ffcc;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ─── Keyboard hint ─── */
+    kbd {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-family: monospace;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ─── Counter animation ─── */
+    .counter { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="bg-[#0a0e27] text-white antialiased overflow-x-hidden" style="font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;">
+
+  <!-- Background Effects -->
+  <div class="grid-bg"></div>
+  <div class="scanline"></div>
+  <div class="particle" style="left:10%; top:80%; animation-delay: 0s;"></div>
+  <div class="particle" style="left:25%; top:60%; animation-delay: 1.5s;"></div>
+  <div class="particle" style="left:55%; top:75%; animation-delay: 3s;"></div>
+  <div class="particle" style="left:75%; top:85%; animation-delay: 4.5s;"></div>
+  <div class="particle" style="left:90%; top:65%; animation-delay: 6s;"></div>
+
+  <!-- Progress Bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressBar" style="width: 16.66%"></div>
+  </div>
+
+  <!-- Navigation Dots -->
+  <div class="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+    <div class="nav-dot active" onclick="goSlide(0)" title="Portada"></div>
+    <div class="nav-dot" onclick="goSlide(1)" title="Justificación"></div>
+    <div class="nav-dot" onclick="goSlide(2)" title="Arquitectura"></div>
+    <div class="nav-dot" onclick="goSlide(3)" title="Evidencia"></div>
+    <div class="nav-dot" onclick="goSlide(4)" title="Impacto"></div>
+    <div class="nav-dot" onclick="goSlide(5)" title="Cierre"></div>
+  </div>
+
+  <!-- Slide Counter -->
+  <div class="fixed top-6 right-6 z-50 text-sm tracking-widest" style="color: rgba(0,255,255,0.5); font-family: monospace;">
+    <span id="slideNum">01</span> / 06
+  </div>
+
+  <!-- Keyboard Hints -->
+  <div class="fixed bottom-6 right-6 z-50 flex gap-3 items-center" style="color: rgba(255,255,255,0.3); font-size: 12px;">
+    <kbd>←</kbd> <kbd>→</kbd> para navegar
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 1 — PORTADA -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-1 active" id="slide-0">
+    <div class="relative z-10 max-w-5xl mx-auto text-center">
+
+      <!-- Shield Icon -->
+      <div class="fade-up mb-8" style="transition-delay: 0.1s;">
+        <svg class="shield-pulse mx-auto" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4" stroke="#00ffcc" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <!-- Title -->
+      <div class="fade-up" style="transition-delay: 0.3s;">
+        <p class="text-sm tracking-[0.4em] uppercase mb-3" style="color: #00ffcc;">// FIM-Secure • Windows Native</p>
+        <h1 class="text-5xl md:text-7xl font-bold mb-4 leading-tight">
+          <span class="glow-cyan">Monitor de Integridad</span><br>
+          <span style="background: linear-gradient(90deg, #00ffc8, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">de Archivos</span>
+        </h1>
+        <p class="text-xl md:text-2xl font-light mt-2" style="color: rgba(255,255,255,0.6);">Híbrido C / Python</p>
+      </div>
+
+      <!-- Description -->
+      <div class="fade-up mt-8" style="transition-delay: 0.5s;">
+        <p class="text-base md:text-lg max-w-2xl mx-auto leading-relaxed" style="color: rgba(255,255,255,0.5);">
+          Detección proactiva de alteraciones críticas y persistencia relacional<br>inmune a vulnerabilidades.
+        </p>
+      </div>
+
+      <!-- Team Cards -->
+      <div class="fade-up mt-12 flex flex-wrap justify-center gap-4" style="transition-delay: 0.7s;">
+        <div class="px-5 py-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm">
+          <p class="text-xs tracking-widest uppercase" style="color: #00ffcc;">PO / Dev 2</p>
+          <p class="text-base font-semibold text-white mt-1">Nelson Sánchez</p>
+        </div>
+        <div class="px-5 py-3 rounded-xl border border-purple-500/20 bg-purple-500/5 backdrop-blur-sm">
+          <p class="text-xs tracking-widest uppercase" style="color: #a855f7;">Scrum Master</p>
+          <p class="text-base font-semibold text-white mt-1">Andrea Pernil</p>
+        </div>
+        <div class="px-5 py-3 rounded-xl border border-green-500/20 bg-green-500/5 backdrop-blur-sm">
+          <p class="text-xs tracking-widest uppercase" style="color: #00ff96;">Dev 1</p>
+          <p class="text-base font-semibold text-white mt-1">Pedro Díaz</p>
+        </div>
+      </div>
+
+      <!-- Section Tag -->
+      <div class="fade-up mt-8" style="transition-delay: 0.9s;">
+        <span class="inline-block px-4 py-2 rounded-full text-xs tracking-widest uppercase border" style="border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.4);">
+          S18 — Ciberseguridad
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 2 — JUSTIFICACIÓN TÉCNICA -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-2" id="slide-1">
+    <div class="relative z-10 max-w-5xl mx-auto">
+
+      <!-- Section Label -->
+      <div class="fade-up mb-10">
+        <span class="text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full border" style="color: #ff3250; border-color: rgba(255,50,80,0.3); background: rgba(255,50,80,0.05);">01 · Justificación Técnica</span>
+        <h2 class="text-4xl md:text-5xl font-bold mt-4 glow-red">Motivo de Elección del Tema</h2>
+      </div>
+
+      <!-- Three reason cards -->
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="fade-left rounded-2xl p-6 border box-glow-red" style="transition-delay: 0.2s; background: rgba(255,50,80,0.04); border-color: rgba(255,50,80,0.2);">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,50,80,0.1);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff3250" stroke-width="2">
+              <path d="M12 9v4M12 17h.01M4.93 4.93l14.14 14.14M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #ff6080;">Vector Principal de Ataque</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.6);">El malware moderno modifica binarios del sistema para lograr <strong class="text-white">persistencia silenciosa</strong> sin levantar sospechas.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="fade-up rounded-2xl p-6 border box-glow-red" style="transition-delay: 0.4s; background: rgba(255,50,80,0.04); border-color: rgba(255,50,80,0.2);">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,50,80,0.1);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff3250" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #ff6080;">Detección Tardía</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.6);">Sin verificación criptográfica continua, la alteración de un archivo crítico se descubre <strong class="text-white">semanas después</strong> del incidente.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="fade-right rounded-2xl p-6 border box-glow-red" style="transition-delay: 0.6s; background: rgba(255,50,80,0.04); border-color: rgba(255,50,80,0.2);">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,50,80,0.1);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff3250" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #ff6080;">Desafío Híbrido C / Python</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.6);">Demostrar <strong class="text-white">alto rendimiento en C</strong> combinado con gestión estructurada de datos e inmunidad OWASP en Python.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 3 — ARQUITECTURA -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-3" id="slide-2">
+    <div class="relative z-10 max-w-5xl mx-auto">
+
+      <div class="fade-up mb-10">
+        <span class="text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full border" style="color: #00d4ff; border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.05);">02 · Arquitectura de Software</span>
+        <h2 class="text-4xl md:text-5xl font-bold mt-4 glow-cyan">Funcionamiento General</h2>
+      </div>
+
+      <!-- Architecture Flow -->
+      <div class="flex flex-col md:flex-row items-stretch justify-center gap-0 md:gap-0 mt-8">
+
+        <!-- Module 1: Motor C -->
+        <div class="fade-left flex-1 rounded-2xl p-6 border box-glow-cyan" style="transition-delay: 0.2s; background: rgba(0,255,255,0.03); border-color: rgba(0,255,255,0.2);">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg" style="background: rgba(0,255,255,0.15); color: #00ffcc;">1</div>
+            <h3 class="text-lg font-bold" style="color: #00ffcc;">Motor C Nativo</h3>
+          </div>
+          <ul class="space-y-2 text-sm" style="color: rgba(255,255,255,0.6);">
+            <li class="flex items-start gap-2">
+              <span style="color: #00ffcc;">▸</span>
+              <span>Calcula hashes <strong class="text-white">SHA-256</strong> usando <code class="px-1.5 py-0.5 rounded text-xs" style="background: rgba(0,255,255,0.1); color: #00ffcc;">wincrypt.h</code></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #00ffcc;">▸</span>
+              <span>Bloques de <strong class="text-white">4 KB</strong> sin fugas de memoria</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #00ffcc;">▸</span>
+              <span>API nativa de Windows</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Arrow -->
+        <div class="hidden md:flex items-center justify-center px-2">
+          <div class="fade-up" style="transition-delay: 0.35s;">
+            <svg width="50" height="24" viewBox="0 0 50 24">
+              <defs>
+                <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00ffcc;stop-opacity:0.8"/>
+                  <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0.8"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="12" x2="40" y2="12" stroke="url(#arrowGrad)" stroke-width="2" stroke-dasharray="4 3"/>
+              <polygon points="38,6 50,12 38,18" fill="#00d4ff"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex md:hidden items-center justify-center py-2">
+          <svg width="24" height="40" viewBox="0 0 24 40">
+            <line x1="12" y1="0" x2="12" y2="30" stroke="#00ffcc" stroke-width="2" stroke-dasharray="4 3"/>
+            <polygon points="6,28 12,40 18,28" fill="#00d4ff"/>
+          </svg>
+        </div>
+
+        <!-- Module 2: Orquestador Python -->
+        <div class="fade-up flex-1 rounded-2xl p-6 border box-glow-purple" style="transition-delay: 0.4s; background: rgba(168,85,247,0.03); border-color: rgba(168,85,247,0.2);">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg" style="background: rgba(168,85,247,0.15); color: #a855f7;">2</div>
+            <h3 class="text-lg font-bold" style="color: #c084fc;">Orquestador Python</h3>
+          </div>
+          <ul class="space-y-2 text-sm" style="color: rgba(255,255,255,0.6);">
+            <li class="flex items-start gap-2">
+              <span style="color: #a855f7;">▸</span>
+              <span>Compara firma actual contra <strong class="text-white">línea base</strong></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #a855f7;">▸</span>
+              <span>Consultas <strong class="text-white">parametrizadas</strong> (Anti-SQLi)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #a855f7;">▸</span>
+              <span>Inmunidad OWASP</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Arrow -->
+        <div class="hidden md:flex items-center justify-center px-2">
+          <div class="fade-up" style="transition-delay: 0.55s;">
+            <svg width="50" height="24" viewBox="0 0 50 24">
+              <line x1="0" y1="12" x2="40" y2="12" stroke="url(#arrowGrad)" stroke-width="2" stroke-dasharray="4 3"/>
+              <polygon points="38,6 50,12 38,18" fill="#a855f7"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex md:hidden items-center justify-center py-2">
+          <svg width="24" height="40" viewBox="0 0 24 40">
+            <line x1="12" y1="0" x2="12" y2="30" stroke="#a855f7" stroke-width="2" stroke-dasharray="4 3"/>
+            <polygon points="6,28 12,40 18,28" fill="#a855f7"/>
+          </svg>
+        </div>
+
+        <!-- Module 3: Base de Datos -->
+        <div class="fade-right flex-1 rounded-2xl p-6 border box-glow-green" style="transition-delay: 0.6s; background: rgba(0,255,150,0.03); border-color: rgba(0,255,150,0.2);">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg" style="background: rgba(0,255,150,0.15); color: #00ff96;">3</div>
+            <h3 class="text-lg font-bold" style="color: #00ff96;">Base de Datos 3FN</h3>
+          </div>
+          <ul class="space-y-2 text-sm" style="color: rgba(255,255,255,0.6);">
+            <li class="flex items-start gap-2">
+              <span style="color: #00ff96;">▸</span>
+              <span>SQLite con <strong class="text-white">4 tablas</strong> normalizadas</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #00ff96;">▸</span>
+              <span>USUARIO, POLÍTICA, ARCHIVO, ALERTA</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span style="color: #00ff96;">▸</span>
+              <span>Registro permanente de incidentes</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- DB Schema mini-diagram -->
+      <div class="scale-in mt-10 mx-auto max-w-md rounded-xl p-4 border text-center" style="transition-delay: 0.8s; background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1);">
+        <p class="text-xs tracking-widest uppercase mb-3" style="color: rgba(255,255,255,0.35);">Esquema Relacional</p>
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+          <span class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold" style="background: rgba(0,255,255,0.1); color: #00ffcc; border: 1px solid rgba(0,255,255,0.2);">USUARIO</span>
+          <span style="color: rgba(255,255,255,0.2);">→</span>
+          <span class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold" style="background: rgba(168,85,247,0.1); color: #c084fc; border: 1px solid rgba(168,85,247,0.2);">POLÍTICA</span>
+          <span style="color: rgba(255,255,255,0.2);">→</span>
+          <span class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold" style="background: rgba(0,255,150,0.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2);">ARCHIVO</span>
+          <span style="color: rgba(255,255,255,0.2);">→</span>
+          <span class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold" style="background: rgba(255,50,80,0.1); color: #ff6080; border: 1px solid rgba(255,50,80,0.2);">ALERTA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 4 — EVIDENCIA PRÁCTICA -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-4" id="slide-3">
+    <div class="relative z-10 max-w-5xl mx-auto">
+
+      <div class="fade-up mb-8">
+        <span class="text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full border" style="color: #00ff96; border-color: rgba(0,255,150,0.3); background: rgba(0,255,150,0.05);">03 · Evidencia Práctica</span>
+        <h2 class="text-4xl md:text-5xl font-bold mt-4 glow-green">Resultados Obtenidos</h2>
+      </div>
+
+      <!-- Terminal Window -->
+      <div class="fade-up rounded-2xl overflow-hidden border" style="transition-delay: 0.3s; border-color: rgba(0,255,150,0.15); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);">
+
+        <!-- Terminal Header -->
+        <div class="flex items-center gap-2 px-4 py-3" style="background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <div class="w-3 h-3 rounded-full" style="background: #ff5f57;"></div>
+          <div class="w-3 h-3 rounded-full" style="background: #febc2e;"></div>
+          <div class="w-3 h-3 rounded-full" style="background: #28c840;"></div>
+          <span class="ml-3 text-xs font-mono" style="color: rgba(255,255,255,0.35);">fim_project — cmd.exe</span>
+          <button onclick="runTerminalDemo()" class="ml-auto px-3 py-1 rounded-lg text-xs font-mono cursor-pointer transition-all hover:scale-105" style="background: rgba(0,255,150,0.15); color: #00ff96; border: 1px solid rgba(0,255,150,0.3);">
+            ▶ Ejecutar Demo
+          </button>
+        </div>
+
+        <!-- Terminal Body -->
+        <div class="p-5 font-mono text-sm leading-7" id="terminal-body">
+          <div class="terminal-line" data-delay="0">
+            <span style="color: rgba(255,255,255,0.35);"># 1. Compilación del motor nativo en C</span>
+          </div>
+          <div class="terminal-line" data-delay="400">
+            <span style="color: #febc2e;">C:\fim_project&gt;</span> <span class="text-white">build.bat</span>
+          </div>
+          <div class="terminal-line" data-delay="900">
+            <span style="color: #28c840;">[OK]</span> Executable generated: <span style="color: #00ffcc;">build/fim_hasher.exe</span>
+          </div>
+          <div class="terminal-line mt-3" data-delay="1500">
+            <span style="color: rgba(255,255,255,0.35);"># 2. Registro de archivo crítico en Línea Base</span>
+          </div>
+          <div class="terminal-line" data-delay="1900">
+            <span style="color: #febc2e;">C:\fim_project&gt;</span> <span class="text-white">python fim_orchestrator.py init C:\Windows\System32\drivers\etc\hosts</span>
+          </div>
+          <div class="terminal-line" data-delay="2500">
+            <span style="color: #00d4ff;">[BASELINE]</span> Hash SHA-256: <span style="color: rgba(255,255,255,0.5); font-size: 11px;">a665a459...27ae3</span>
+          </div>
+          <div class="terminal-line mt-3" data-delay="3300">
+            <span style="color: rgba(255,255,255,0.35);"># 3. Simulación de ataque y detección automática</span>
+          </div>
+          <div class="terminal-line" data-delay="3700">
+            <span style="color: #febc2e;">C:\fim_project&gt;</span> <span class="text-white">python fim_orchestrator.py check</span>
+          </div>
+          <div class="terminal-line" data-delay="4400">
+            <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,50,80,0.2); color: #ff3250;">⚠ ALERTA CRÍTICA</span> <span style="color: #ff6080;">Archivo MODIFICADO:</span> <span class="text-white">C:\Windows\System32\drivers\etc\hosts</span>
+          </div>
+          <div class="terminal-line" data-delay="5000">
+            <span style="color: rgba(255,255,255,0.4);">  Hash Esperado:</span> <span style="color: #00ff96; font-size: 11px;">a665a459...27ae3</span>
+          </div>
+          <div class="terminal-line" data-delay="5500">
+            <span style="color: rgba(255,255,255,0.4);">  Hash Detectado:</span> <span style="color: #ff3250; font-size: 11px;">9f86d081...00a08</span>
+          </div>
+          <div class="terminal-line" data-delay="6200">
+            <span style="color: #28c840;">[BD STATUS]</span> Evento registrado en tabla <span style="color: #00ffcc;">ALERTA</span> <span style="color: rgba(255,255,255,0.4);">(ID Archivo: 101)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 5 — IMPACTO OPERATIVO -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-5" id="slide-4">
+    <div class="relative z-10 max-w-5xl mx-auto">
+
+      <div class="fade-up mb-10">
+        <span class="text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full border" style="color: #a855f7; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05);">04 · Impacto Operativo</span>
+        <h2 class="text-4xl md:text-5xl font-bold mt-4 glow-purple">Beneficios Clave</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <!-- Benefit 1 -->
+        <div class="fade-left rounded-2xl p-7 border box-glow-cyan group cursor-default transition-all duration-300 hover:scale-[1.03]" style="transition-delay: 0.2s; background: rgba(0,255,255,0.03); border-color: rgba(0,255,255,0.15);">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110" style="background: rgba(0,255,255,0.08);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #00ffcc;">Protección de Servidores Web</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">Alerta si un atacante altera archivos <code class="px-1 py-0.5 rounded text-xs" style="background: rgba(0,255,255,0.1); color: #00ffcc;">index.php</code> o scripts del servidor para inyectar código malicioso.</p>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="fade-up rounded-2xl p-7 border box-glow-purple group cursor-default transition-all duration-300 hover:scale-[1.03]" style="transition-delay: 0.4s; background: rgba(168,85,247,0.03); border-color: rgba(168,85,247,0.15);">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110" style="background: rgba(168,85,247,0.08);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #c084fc;">Auditoría SOC y Cumplimiento</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">Cumple normativas <strong class="text-white">ISO 27001 / PCI-DSS</strong> registrando estampas de tiempo inalterables.</p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="fade-right rounded-2xl p-7 border box-glow-green group cursor-default transition-all duration-300 hover:scale-[1.03]" style="transition-delay: 0.6s; background: rgba(0,255,150,0.03); border-color: rgba(0,255,150,0.15);">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110" style="background: rgba(0,255,150,0.08);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00ff96" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3" style="color: #00ff96;">Bajo Consumo de Recursos</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">Consumo inferior a <strong class="text-white">3 MB de RAM</strong> gracias a la ejecución ultra rápida del motor en C.</p>
+          <!-- Animated counter -->
+          <div class="mt-4 flex items-end gap-1">
+            <span class="counter text-3xl font-bold" style="color: #00ff96;" id="ramCounter">0</span>
+            <span class="text-sm" style="color: rgba(0,255,150,0.6);">MB RAM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="scale-in mt-10 grid grid-cols-3 gap-4 max-w-2xl mx-auto" style="transition-delay: 0.8s;">
+        <div class="text-center py-4 rounded-xl" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+          <p class="text-2xl font-bold" style="color: #00ffcc;">SHA-256</p>
+          <p class="text-xs mt-1" style="color: rgba(255,255,255,0.35);">Algoritmo Hash</p>
+        </div>
+        <div class="text-center py-4 rounded-xl" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+          <p class="text-2xl font-bold" style="color: #a855f7;">4 KB</p>
+          <p class="text-xs mt-1" style="color: rgba(255,255,255,0.35);">Bloques de Lectura</p>
+        </div>
+        <div class="text-center py-4 rounded-xl" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+          <p class="text-2xl font-bold" style="color: #00ff96;">3FN</p>
+          <p class="text-xs mt-1" style="color: rgba(255,255,255,0.35);">Normalización BD</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SLIDE 6 — CIERRE -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="slide bg-cyber-6" id="slide-5">
+    <div class="relative z-10 max-w-4xl mx-auto text-center">
+
+      <!-- Big shield -->
+      <div class="fade-up mb-8" style="transition-delay: 0.1s;">
+        <div class="relative inline-block">
+          <svg class="shield-pulse" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="1">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4" stroke="#00ffcc" stroke-width="2"/>
+          </svg>
+          <div class="absolute inset-0 rounded-full pulse-ring" style="border: 2px solid rgba(0,255,200,0.3);"></div>
+        </div>
+      </div>
+
+      <div class="fade-up" style="transition-delay: 0.3s;">
+        <h2 class="text-5xl md:text-6xl font-bold mb-4">
+          <span style="background: linear-gradient(90deg, #00ffc8, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">¡Gracias por su Atención!</span>
+        </h2>
+      </div>
+
+      <div class="fade-up" style="transition-delay: 0.5s;">
+        <p class="text-xl md:text-2xl font-light max-w-2xl mx-auto" style="color: rgba(255,255,255,0.5);">
+          <strong class="text-white">FIM-Secure:</strong> Monitoreo de integridad confiable, eficiente y seguro.
+        </p>
+      </div>
+
+      <div class="fade-up mt-12" style="transition-delay: 0.7s;">
+        <div class="inline-block px-8 py-4 rounded-2xl border" style="background: rgba(0,255,255,0.03); border-color: rgba(0,255,255,0.15);">
+          <p class="text-sm tracking-widest uppercase mb-2" style="color: #00ffcc;">Espacio Abierto</p>
+          <p class="text-2xl font-bold text-white">Preguntas del Jurado</p>
+        </div>
+      </div>
+
+      <!-- Team footer -->
+      <div class="fade-up mt-12 flex justify-center gap-6 flex-wrap" style="transition-delay: 0.9s;">
+        <span class="text-sm" style="color: rgba(255,255,255,0.3);">Nelson Sánchez</span>
+        <span style="color: rgba(255,255,255,0.1);">•</span>
+        <span class="text-sm" style="color: rgba(255,255,255,0.3);">Andrea Pernil</span>
+        <span style="color: rgba(255,255,255,0.1);">•</span>
+        <span class="text-sm" style="color: rgba(255,255,255,0.3);">Pedro Díaz</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- JAVASCRIPT -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <script>
+    let currentSlide = 0;
+    const totalSlides = 6;
+    let isTransitioning = false;
+
+    function goSlide(n) {
+      if (isTransitioning || n === currentSlide || n < 0 || n >= totalSlides) return;
+      isTransitioning = true;
+
+      const oldSlide = document.getElementById('slide-' + currentSlide);
+      const newSlide = document.getElementById('slide-' + n);
+
+      // Fade out old
+      oldSlide.classList.remove('visible');
+      setTimeout(() => {
+        oldSlide.classList.remove('active');
+
+        // Show new
+        newSlide.classList.add('active');
+        // Force reflow
+        void newSlide.offsetWidth;
+        setTimeout(() => {
+          newSlide.classList.add('visible');
+          currentSlide = n;
+          updateUI();
+          animateSlideElements(newSlide);
+          isTransitioning = false;
+        }, 50);
+      }, 400);
+    }
+
+    function updateUI() {
+      // Progress
+      document.getElementById('progressBar').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+
+      // Slide number
+      document.getElementById('slideNum').textContent = String(currentSlide + 1).padStart(2, '0');
+
+      // Nav dots
+      document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+    }
+
+    function animateSlideElements(slide) {
+      const animElements = slide.querySelectorAll('.fade-up, .fade-left, .fade-right, .scale-in');
+      animElements.forEach(el => {
+        el.classList.remove('in');
+      });
+
+      animElements.forEach(el => {
+        const delay = parseFloat(el.style.transitionDelay) * 1000 || 0;
+        setTimeout(() => el.classList.add('in'), delay + 100);
+      });
+
+      // RAM counter on slide 4
+      if (currentSlide === 4) {
+        animateCounter('ramCounter', 0, 3, 1500);
+      }
+
+      // Terminal reset on slide 3
+      if (currentSlide === 3) {
+        const lines = slide.querySelectorAll('.terminal-line');
+        lines.forEach(l => l.classList.remove('typed'));
+      }
+    }
+
+    function animateCounter(id, start, end, duration) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const startTime = performance.now();
+      function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = start + (end - start) * eased;
+        el.textContent = '< ' + value.toFixed(1);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Terminal demo animation
+    function runTerminalDemo() {
+      const lines = document.querySelectorAll('#terminal-body .terminal-line');
+      lines.forEach(l => l.classList.remove('typed'));
+
+      lines.forEach(line => {
+        const delay = parseInt(line.dataset.delay) || 0;
+        setTimeout(() => line.classList.add('typed'), delay);
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        goSlide(currentSlide + 1);
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        goSlide(currentSlide - 1);
+      }
+      if (e.key === 'Home') goSlide(0);
+      if (e.key === 'End') goSlide(totalSlides - 1);
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    });
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      const dy = e.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) goSlide(currentSlide + 1);
+        else goSlide(currentSlide - 1);
+      }
+    });
+
+    // Initialize first slide
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstSlide = document.getElementById('slide-0');
+      firstSlide.classList.add('visible');
+      animateSlideElements(firstSlide);
+    });
+  </script>
+</body>
+</html>
