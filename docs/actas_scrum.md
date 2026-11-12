@@ -17,7 +17,7 @@
 
 ## Semana 4 — 21/10/2026
 - *Participantes:* Nelson (PO / Dev 2), Pedro Diaz (Dev 1), Andrea Pernil (SM)
-- - *Avances:* Entrega de taller N°2 Consultas SQL para corroborar la seguridad del proyecto. 
+-  *Avances:* Entrega de taller N°2 Consultas SQL para corroborar la seguridad del proyecto. 
 - *Próximos pasos:* Entrega de últimos talleres, N°3 Aplicar formas Normales, N°4 Diagrama de Arquitectura, N°5 Escaneo de vulnerabilidades OWASP. 
 
 ## Semana 5 — 28/10/2026
