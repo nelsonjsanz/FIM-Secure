@@ -32,5 +32,5 @@
 
 ## Semana 7 — 10/11/2026
 - *Participantes:* Nelson (PO / Dev 2), Pedro Diaz (Dev 1), Andrea Pernil (SM)
-- - *Avances:* Conclusión del proyecto (Dia de entrega).
+- *Avances:* Conclusión del proyecto (Dia de entrega).
 - *Próximos pasos:* Exposición de Proyecto y entrega del informe.
