@@ -2,13 +2,13 @@
 
 ## Semana 1 — 30/09/2026
 - *Participantes:* Nelson Sanchez (PO / Dev 2), Pedro Diaz (Dev 1), Andrea Pernil (SM)
-- *Avances:* Seleccion del Proyecto 'FIM-Secure', acuerdos iniciales de trabajo en equipo y asignación de roles (PO/Dev 2, Dev 1 y Scrum Master). Definición de las historias y creacion del repositorio.
+- *Avances:* Selección del Proyecto 'FIM-Secure', acuerdos iniciales de trabajo en equipo y asignación de roles (PO/Dev 2, Dev 1 y Scrum Master). Definición de las historias y creacion del repositorio.
 - *Próximos pasos:* Configurar la línea base de archivos críticos y comenzar la estructura del código en C.
   
 ## Semana 2 — 07/10/2026
 - *Participantes:* Nelson (PO / Dev 2), Pedro Diaz (Dev 1), Andrea Pernil (SM)
-- *Avances:* Análisis de requerimientos de FIM-Secure. diseño conceptual de la base de datos y configuracion inicial del tablero Kanban.
-- *Próximos pasos:* Elaborar el Taller N°1 (Entidades y relacion de base de datos).
+- *Avances:* Análisis de requerimientos de FIM-Secure. Diseño conceptual de la base de datos y configuración inicial del tablero Kanban.
+- *Próximos pasos:* Elaborar el Taller N°1 (Entidades y relación de base de datos).
 
 ## Semana 3 — 14/10/2026
 - *Participantes:* Nelson (PO / Dev 2), Pedro Diaz (Dev 1), Andrea Pernil (SM)
